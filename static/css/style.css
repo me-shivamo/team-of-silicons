@@ -718,7 +718,6 @@ main {
 /* === PRICING === */
 .pricing-block {
     margin-top: 2rem;
-    max-width: 700px;
 }
 
 .pricing-compare {
@@ -728,7 +727,7 @@ main {
 
 .compare-row {
     display: grid;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 260px 1fr;
     border-bottom: 1px solid var(--border);
 }
 
@@ -770,68 +769,203 @@ main {
     font-weight: 600;
 }
 
-.pricing-main {
-    padding: 2.5rem;
+.pricing-tiers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--border);
+    border-top: none;
+    align-items: stretch;
+}
+
+.pricing-tier {
+    padding: 2rem 2rem 2rem 2rem;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+}
+
+.pricing-tier:last-child {
+    border-right: none;
+}
+
+.pricing-tier.featured {
     background: var(--terminal-bg);
     color: var(--terminal-fg);
 }
 
-.pricing-amount {
+/* fixed-height badge row so price aligns across all cards */
+.tier-badge-row {
+    height: 2rem;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.tier-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    background: var(--terminal-fg);
+    color: var(--terminal-bg);
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+}
+
+.tier-name {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--fg-dim);
+    margin-bottom: 0.6rem;
+}
+
+.pricing-tier.featured .tier-name {
+    color: #999;
+}
+
+.tier-amount {
     font-family: var(--font-sans);
-    font-size: clamp(48px, 6vw, 80px);
+    font-size: clamp(36px, 3.5vw, 48px);
     font-weight: 900;
     letter-spacing: -0.04em;
     line-height: 1;
 }
 
-.pricing-period {
+.tier-period {
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: #999;
-    margin-top: 0.5rem;
+    letter-spacing: 0.12em;
+    color: var(--fg-dim);
+    margin-top: 0.4rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
 }
 
-.pricing-includes {
-    margin-top: 1.5rem;
+.pricing-tier.featured .tier-period {
+    color: #777;
+    border-bottom-color: #333;
+}
+
+.tier-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tier-features li {
     font-family: var(--font-mono);
-    font-size: 12px;
-    line-height: 2;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--fg-muted);
+}
+
+.tier-features li:last-child {
+    border-bottom: none;
+}
+
+.pricing-tier.featured .tier-features li {
+    border-bottom-color: #333;
     color: #ccc;
+}
+
+.tier-audience {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--fg-dim);
+    margin-top: auto;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    margin-bottom: 0;
+}
+
+.pricing-tier.featured .tier-audience {
+    color: #777;
+    border-top-color: #333;
+}
+
+.tier-api-note {
+    font-size: 11px;
+    line-height: 1.7;
+    color: #888;
+    padding-top: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.tier-trust {
+    font-family: var(--font-mono);
+    font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
+    color: #666;
+    margin-bottom: 1.25rem;
 }
 
-.pricing-api-note {
-    margin-top: 1.5rem;
-    font-size: 12px;
-    line-height: 1.7;
-    color: #aaa;
-    border-top: 1px solid #333;
-    padding-top: 1.25rem;
+/* CTA area — same top margin on all cards */
+.tier-cta-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+    margin-top: 1.25rem;
 }
 
-.pricing-details {
-    margin-top: 1rem;
-    font-size: 13px;
-    line-height: 1.8;
-    color: #888;
-    font-weight: 500;
-}
-
-.pricing-main .cta-btn-inverted {
-    display: inline-block;
+.cta-btn-primary {
     background: var(--terminal-fg);
     color: var(--terminal-bg);
-    border: none;
+    font-weight: 700;
+    text-align: center;
 }
 
-.pricing-main .cta-btn-inverted:hover {
+.cta-btn-primary:hover {
     background: #fff;
     opacity: 1;
     transform: translateY(-2px);
     box-shadow: 0 4px 20px rgba(237, 232, 224, 0.3);
+}
+
+.cta-btn-outline {
+    background: transparent;
+    color: var(--fg);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    padding: 0.85rem 1.75rem;
+    margin-top: 1.25rem;
+    text-align: center;
+    display: block;
+}
+
+.cta-btn-outline:hover {
+    border-color: var(--fg);
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+.tier-cta-secondary {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #777;
+    text-decoration: none;
+    text-align: center;
+    border-bottom: 1px solid #555;
+    padding-bottom: 1px;
+    align-self: center;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.tier-cta-secondary:hover {
+    color: var(--terminal-fg);
+    border-bottom-color: var(--terminal-fg);
 }
 
 /* === SECURITY === */
@@ -1053,7 +1187,12 @@ footer {
     .use-cases-grid { grid-template-columns: 1fr; }
     .process-steps { grid-template-columns: 1fr; }
 
-    .compare-row { grid-template-columns: 130px 1fr; }
+    .compare-row { grid-template-columns: 160px 1fr; }
+
+    .pricing-tiers { grid-template-columns: 1fr; }
+    .pricing-tier { border-right: none; border-bottom: 1px solid var(--border); }
+    .pricing-tier.featured { border-bottom-color: #333; }
+    .pricing-tier:last-child { border-bottom: none; }
 
     .final-cta { padding: 5rem 1.5rem; }
 
