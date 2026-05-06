@@ -38,6 +38,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
     <script src="static/js/splash.js"></script>
 
+    <!--
+    ============================================================================
+    HIDDEN PER SHIVAM (2026-05-06): landing page simplified to funnel-only.
+    Header / nav, pricing, security, footer are kept in source for easy restore
+    but commented out so nothing renders except the funnel.
+    To restore: uncomment the matching block(s) below.
+    ============================================================================
+    -->
+    <!-- BEGIN HIDDEN: HEADER
     <header>
         <nav>
             <div class="nav-left">
@@ -54,12 +63,13 @@
             </div>
         </nav>
     </header>
+    END HIDDEN: HEADER -->
 
     <main>
         <!-- FUNNEL: problem-discovery state machine. all 5 steps render into #funnel-root. -->
         <section class="funnel-section" id="funnel-root" aria-label="problem discovery"></section>
 
-        <!-- PRICING -->
+        <!-- BEGIN HIDDEN: PRICING
         <section class="section" id="pricing">
             <span class="section-label">pricing</span>
             <h2>a full AI team.<br>for less than one salary.</h2>
@@ -119,7 +129,9 @@
             </div>
         </section>
 
-        <!-- SECURITY -->
+        END HIDDEN: PRICING -->
+
+        <!-- BEGIN HIDDEN: SECURITY
         <section class="section" id="security">
             <span class="section-label">security</span>
             <h2>nothing leaves your servers.</h2>
@@ -142,8 +154,10 @@
                 </div>
             </div>
         </section>
+        END HIDDEN: SECURITY -->
     </main>
 
+    <!-- BEGIN HIDDEN: FOOTER
     <footer>
         <div class="footer-content">
             <div class="footer-left">
@@ -159,6 +173,11 @@
             </div>
         </div>
     </footer>
+    END HIDDEN: FOOTER -->
+
+    <!-- LEGACY MARKUP RETAINED ABOVE in commented blocks (HEADER / PRICING / SECURITY / FOOTER).
+         To bring any back, uncomment the matching BEGIN/END HIDDEN block. -->
+
 
     <script src="static/js/problems.js"></script>
     <script src="static/js/funnel.js"></script>

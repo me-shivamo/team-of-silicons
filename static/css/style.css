@@ -1128,9 +1128,8 @@ footer {
    the old hero. matches the existing palette/type system. */
 
 .funnel-section {
-    min-height: calc(100vh - 56px);
+    min-height: 100vh;
     padding: 4rem clamp(2rem, 8vw, 10rem);
-    padding-top: calc(56px + 3rem);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1659,7 +1658,6 @@ footer {
     /* funnel */
     .funnel-section {
         padding: 3rem 1.5rem;
-        padding-top: calc(56px + 2rem);
         min-height: auto;
     }
 
