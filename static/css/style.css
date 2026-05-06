@@ -1414,43 +1414,6 @@ footer {
 }
 
 /* --- step 3: solution cards -------------------------------------------- */
-.funnel-quote-card {
-    margin: 0 0 2rem 0;
-    padding: 1.5rem 1.75rem;
-    border: 1px dashed var(--border);
-    background: var(--surface-hover);
-    position: relative;
-    max-width: 760px;
-}
-
-.funnel-quote-mark {
-    font-family: var(--font-sans);
-    font-size: 56px;
-    line-height: 0.8;
-    font-weight: 900;
-    color: var(--fg-dim);
-    display: block;
-    margin-bottom: 0.25rem;
-}
-
-.funnel-quote-body {
-    font-family: var(--font-sans);
-    font-size: 1rem;
-    color: var(--fg-muted);
-    line-height: 1.5;
-    font-style: italic;
-}
-
-.funnel-quote-author {
-    display: block;
-    margin-top: 0.75rem;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--fg-dim);
-}
-
 .funnel-solution-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -1720,8 +1683,6 @@ footer {
 
     .funnel-actions { gap: 1rem; }
     .funnel-cta-big { padding: 1.2rem 2.4rem; font-size: 13px; }
-
-    .funnel-quote-card { padding: 1.25rem 1.25rem; }
 }
 
 @media (max-width: 480px) {

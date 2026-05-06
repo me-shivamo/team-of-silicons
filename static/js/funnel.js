@@ -297,12 +297,6 @@
             text: 'no roadmap. no waitlist. these run today.'
         });
 
-        var quote = el('blockquote', { class: 'funnel-quote-card' }, [
-            el('span', { class: 'funnel-quote-mark', 'aria-hidden': 'true', text: '“' }),
-            el('p', { class: 'funnel-quote-body', text: 'client quote — to be added.' }),
-            el('span', { class: 'funnel-quote-author', text: '— placeholder for shivam to drop in real testimonials' })
-        ]);
-
         var cards = el('div', { class: 'funnel-solution-grid' });
         state.checked.forEach(function (text) {
             var p = findProblem(state.category, text);
@@ -335,7 +329,6 @@
             backLink(2, 'edit my answers'),
             heading,
             sub,
-            quote,
             cards,
             actions
         ]);
