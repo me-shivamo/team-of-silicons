@@ -47,8 +47,7 @@
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
             <div class="nav-right">
-                <a href="#what">what</a>
-                <a href="#use-cases">use cases</a>
+                <a href="#funnel-root">start</a>
                 <a href="#pricing">pricing</a>
                 <a href="#security">security</a>
                 <a href="https://t.me/Welcome_to_Silicon_bot" target="_blank" rel="noopener" class="nav-cta">try silicon</a>
@@ -57,188 +56,8 @@
     </header>
 
     <main>
-        <!-- HERO -->
-        <section class="hero">
-            <div class="hero-content">
-                <h1>For leaders who spend money to gain time and leverage.</h1>
-                <p class="hero-sub">we deploy AI employees inside your company. you chat with them. they do the work. $2,500/mo + API costs. 7 day trial or all money returned.</p>
-                <a href="https://t.me/Welcome_to_Silicon_bot" target="_blank" rel="noopener" class="cta-btn">try silicon</a>
-            </div>
-            <div class="hero-chat" aria-hidden="true">
-                <div class="chat-header">
-                    <div class="chat-avatar">S</div>
-                    <div class="chat-header-info">
-                        <span class="chat-name">Silicon — PA</span>
-                        <span class="chat-status"><span class="status-dot"></span>online</span>
-                    </div>
-                </div>
-                <div class="chat-body" id="hero-chat">
-                    <div class="chat-msg incoming">
-                        <div class="chat-bubble">good morning! you've got 3 meetings today. first one's at 10:30.</div>
-                        <span class="chat-time">9:01 AM</span>
-                    </div>
-                    <div class="chat-msg incoming">
-                        <div class="chat-bubble">i drafted the follow-up to Acme. here it is. all good to send?</div>
-                        <div class="chat-file">
-                            <div class="chat-file-icon">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 1h5.5L13 4.5V13a2 2 0 01-2 2H4a2 2 0 01-2-2V3a2 2 0 012-2z" stroke="currentColor" stroke-width="1.2"/><path d="M9 1v4h4" stroke="currentColor" stroke-width="1.2"/></svg>
-                            </div>
-                            <div class="chat-file-info">
-                                <span class="chat-file-name">Acme_Follow-Up.pdf</span>
-                                <span class="chat-file-size">24 KB</span>
-                            </div>
-                        </div>
-                        <span class="chat-time">9:02 AM</span>
-                    </div>
-                    <div class="chat-msg outgoing">
-                        <div class="chat-bubble">looks good, send it. also, did the linkedin post go out?</div>
-                        <span class="chat-time">9:04 AM</span>
-                    </div>
-                    <div class="chat-msg incoming">
-                        <div class="chat-bubble">sent. and yes — marketing silicon posted it an hour ago. engagement is up 12% this week btw.</div>
-                        <span class="chat-time">9:04 AM</span>
-                    </div>
-                    <div class="chat-msg outgoing">
-                        <div class="chat-bubble">nice. remind me about the investor deck thursday</div>
-                        <span class="chat-time">9:05 AM</span>
-                    </div>
-                    <div class="chat-msg incoming">
-                        <div class="chat-bubble">done. thursday 9am. anything else before your 10:30?</div>
-                        <span class="chat-time">9:05 AM</span>
-                    </div>
-                </div>
-                <div class="chat-input">
-                    <span class="chat-input-text">message silicon — PA</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- WHAT'S A SILICON -->
-        <section class="section" id="what">
-            <div class="what-layout">
-                <div class="what-text">
-                    <span class="section-label">what's a silicon</span>
-                    <h2>not a bot. not a tool.<br>a teammate.</h2>
-                    <div class="silicon-explainer">
-                        <p>a silicon lives inside your company. it joins your telegram, learns your context, and remembers everything. it writes, builds, schedules, follows up — and asks when it's not sure.</p>
-                        <p><strong>you don't configure it. you talk to it.</strong></p>
-                        <p>deploy more than one and they collaborate. your PA silicon checks with your product silicon. your marketing silicon coordinates with your team. that's not automation — <strong>that's a team</strong>.</p>
-                    </div>
-                </div>
-                <div class="what-visual">
-                    <div class="network-graph" id="network-graph">
-                        <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
-                            <!-- connections -->
-                            <line x1="180" y1="60" x2="60" y2="180" class="net-line" />
-                            <line x1="180" y1="60" x2="300" y2="180" class="net-line" />
-                            <line x1="180" y1="60" x2="180" y2="280" class="net-line" />
-                            <line x1="60" y1="180" x2="300" y2="180" class="net-line net-active" />
-                            <line x1="60" y1="180" x2="180" y2="280" class="net-line" />
-                            <line x1="300" y1="180" x2="180" y2="280" class="net-line" />
-
-                            <!-- animated packets -->
-                            <circle r="3" fill="#1a1a1a" class="packet">
-                                <animateMotion dur="2.5s" repeatCount="indefinite" path="M180,60 L60,180" />
-                            </circle>
-                            <circle r="3" fill="#1a1a1a" class="packet">
-                                <animateMotion dur="2s" repeatCount="indefinite" path="M60,180 L300,180" />
-                            </circle>
-                            <circle r="3" fill="#1a1a1a" class="packet">
-                                <animateMotion dur="3s" repeatCount="indefinite" path="M300,180 L180,280" />
-                            </circle>
-                            <circle r="3" fill="#1a1a1a" class="packet">
-                                <animateMotion dur="2.8s" repeatCount="indefinite" path="M180,280 L180,60" />
-                            </circle>
-                            <circle r="3" fill="#1a1a1a" class="packet">
-                                <animateMotion dur="3.2s" repeatCount="indefinite" path="M60,180 L180,60" />
-                            </circle>
-
-                            <!-- nodes -->
-                            <circle cx="180" cy="60" r="6" class="net-node" />
-                            <text x="180" y="42" text-anchor="middle" class="net-label">PA</text>
-
-                            <circle cx="60" cy="180" r="6" class="net-node" />
-                            <text x="60" y="208" text-anchor="middle" class="net-label">PRODUCT</text>
-
-                            <circle cx="300" cy="180" r="6" class="net-node" />
-                            <text x="300" y="208" text-anchor="middle" class="net-label">MARKETING</text>
-
-                            <circle cx="180" cy="280" r="6" class="net-node" />
-                            <text x="180" y="308" text-anchor="middle" class="net-label">TEAM</text>
-
-                            <text x="180" y="175" text-anchor="middle" class="net-center">YOUR COMPANY</text>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- USE CASES -->
-        <section class="section" id="use-cases">
-            <span class="section-label">real work</span>
-            <h2>things silicons have actually done.</h2>
-            <div class="use-cases-grid">
-                <div class="use-case-card">
-                    <h3>ran social media for a 15-person startup.</h3>
-                    <p>wrote posts, replied to comments, learned the brand voice over weeks. when it wasn't sure about tone — it asked the team first.</p>
-                </div>
-                <div class="use-case-card">
-                    <h3>became a solo founder's right hand.</h3>
-                    <p>reminders, follow-ups, meeting prep, scheduling. the founder stopped dropping balls.</p>
-                </div>
-                <div class="use-case-card">
-                    <h3>turned a voice note into a live project.</h3>
-                    <p>founder recorded a 2-minute idea before bed. by morning — built, tested, hosted.</p>
-                </div>
-                <div class="use-case-card">
-                    <h3>kept a 20-person team aligned.</h3>
-                    <p>talked to every team member, tracked progress, flagged blockers. anyone could ask "where are we on X?" and get a real answer.</p>
-                </div>
-                <div class="use-case-card">
-                    <h3>reviewed the team's work every night.</h3>
-                    <p>while everyone slept, it checked the day's output. flagged gaps, spotted opportunities, delivered a scored report by 7am.</p>
-                </div>
-                <div class="use-case-card use-case-cta">
-                    <h3>what would yours do?</h3>
-                    <p>every company's different. tell us where it hurts.</p>
-                    <a href="https://t.me/Welcome_to_Silicon_bot" target="_blank" rel="noopener" class="cta-btn cta-btn-small">try silicon</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- HOW IT WORKS -->
-        <section class="section" id="process">
-            <span class="section-label">how it starts</span>
-            <h2>live in days. not months.</h2>
-            <div class="process-steps">
-                <div class="process-step">
-                    <div class="step-number">01</div>
-                    <h3>you book a call.</h3>
-                    <p>30 minutes. we learn your team, your pain, your workflows. we tell you exactly which silicons would help.</p>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">02</div>
-                    <h3>we deploy on your servers.</h3>
-                    <p>your infrastructure, your data. your team starts chatting with their silicons day one.</p>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">03</div>
-                    <h3>we stay with you.</h3>
-                    <p>AI changes every week. we keep everything running, improving, and current. need another silicon? just say the word.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- YOUR AI TEAM -->
-        <section class="section" id="team">
-            <span class="section-label">more than software</span>
-            <h2>you also get us.</h2>
-            <div class="ai-team-content">
-                <p>most AI tools leave you alone with a dashboard. we don't.</p>
-                <p>need advice on an AI decision? ask us. need a new silicon for a new workflow? we'll build it. wondering if AI can help with something you haven't even articulated yet? that's literally our job.</p>
-                <p><strong>chats always open. calls whenever. we're your team's AI department.</strong></p>
-            </div>
-        </section>
+        <!-- FUNNEL: problem-discovery state machine. all 5 steps render into #funnel-root. -->
+        <section class="funnel-section" id="funnel-root" aria-label="problem discovery"></section>
 
         <!-- PRICING -->
         <section class="section" id="pricing">
@@ -323,52 +142,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- WHY US -->
-        <section class="section" id="why">
-            <span class="section-label">why us</span>
-            <h2>we built what silicons run on.</h2>
-            <div class="why-points">
-                <p>silicon-browser and silicon-stemcell — open source, MIT licensed. we don't use other people's frameworks. we wrote ours.</p>
-                <p>3 months in production. thousands of messages handled. zero hallucinated emails sent to a client. your reputation is safe with us.</p>
-                <p>we've done 2 years of work in 1 month using the same silicons we deploy for you.</p>
-            </div>
-        </section>
-
-        <!-- TESTIMONIALS (hidden — ready for real ones) -->
-        <!--
-        <section class="section" id="testimonials">
-            <span class="section-label">what people say</span>
-            <h2>from actual users.</h2>
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <p class="testimonial-quote">"testimonial here."</p>
-                    <p class="testimonial-author">— name, role</p>
-                </div>
-            </div>
-        </section>
-        -->
-
-        <!-- ABOUT -->
-        <section class="section" id="about">
-            <span class="section-label">about</span>
-            <h2>by unlikefraction.</h2>
-            <div class="about-content">
-                <p>every small team deserves an AI workforce that actually works.</p>
-                <div class="about-links">
-                    <a href="https://unlikefraction.com" target="_blank" rel="noopener">unlikefraction.com</a>
-                    <a href="https://github.com/unlikefraction/silicon-stemcell" target="_blank" rel="noopener">silicon-stemcell</a>
-                    <a href="https://github.com/unlikefraction/silicon-browser" target="_blank" rel="noopener">silicon-browser</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- FINAL CTA -->
-        <section class="final-cta">
-            <h2>your team is waiting.</h2>
-            <p>30-minute call. 7 day trial. all money returned if it's not for you.</p>
-            <a href="https://t.me/Welcome_to_Silicon_bot" target="_blank" rel="noopener" class="cta-btn">try silicon</a>
-        </section>
     </main>
 
     <footer>
@@ -386,66 +159,8 @@
             </div>
         </div>
     </footer>
-    <script>
-    // Chat message reveal animation
-    (function() {
-        var chat = document.getElementById('hero-chat');
-        if (!chat) return;
-        var msgs = chat.querySelectorAll('.chat-msg');
-        msgs.forEach(function(msg) { msg.style.display = 'none'; });
 
-        function showMsgs() {
-            msgs.forEach(function(msg, i) {
-                setTimeout(function() {
-                    msg.style.display = 'flex';
-                    msg.style.opacity = '0';
-                    msg.style.transform = 'translateY(12px)';
-                    // force reflow so transition works
-                    msg.offsetHeight;
-                    msg.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
-                    msg.style.opacity = '1';
-                    msg.style.transform = 'translateY(0)';
-                    // scroll only if content now overflows
-                    setTimeout(function() {
-                        if (chat.scrollHeight > chat.clientHeight) {
-                            chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
-                        }
-                    }, 50);
-                }, i * 700);
-            });
-        }
-
-        // Start after splash or immediately
-        var splash = document.getElementById('splash-screen');
-        if (splash && splash.style.display !== 'none') {
-            var mo = new MutationObserver(function() {
-                if (splash.style.display === 'none' || splash.style.opacity === '0') {
-                    mo.disconnect();
-                    setTimeout(showMsgs, 800);
-                }
-            });
-            mo.observe(splash, { attributes: true, attributeFilter: ['style'] });
-            setTimeout(showMsgs, 8000);
-        } else {
-            setTimeout(showMsgs, 500);
-        }
-    })();
-
-    // Network graph pulse on hover
-    (function() {
-        var graph = document.getElementById('network-graph');
-        if (!graph) return;
-        var nodes = graph.querySelectorAll('.net-node');
-        nodes.forEach(function(node) {
-            node.addEventListener('mouseenter', function() {
-                node.style.transition = 'r 0.2s ease';
-                node.setAttribute('r', '10');
-            });
-            node.addEventListener('mouseleave', function() {
-                node.setAttribute('r', '6');
-            });
-        });
-    })();
-    </script>
+    <script src="static/js/problems.js"></script>
+    <script src="static/js/funnel.js"></script>
 </body>
 </html>
