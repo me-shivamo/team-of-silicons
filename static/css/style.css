@@ -150,6 +150,9 @@ nav {
 .nav-left { display: flex; align-items: center; gap: 0.75rem; }
 
 .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     color: var(--fg);
     font-family: var(--font-sans);
     font-weight: 800;
@@ -157,6 +160,12 @@ nav {
     white-space: nowrap;
     letter-spacing: -0.03em;
     text-transform: lowercase;
+}
+
+.logo-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
 }
 
 .nav-right {
@@ -1129,8 +1138,7 @@ footer {
 
 .funnel-section {
     min-height: 100dvh;
-    /* tight vertical padding so combined step 1 fits a 720px-usable viewport */
-    padding: 2rem clamp(2rem, 8vw, 10rem);
+    padding: calc(56px + 2.5rem) clamp(1rem, 2vw, 1.5rem) 2rem;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -1141,7 +1149,7 @@ footer {
 
 .funnel-stage {
     width: 100%;
-    max-width: 980px;
+    max-width: 65%;
     margin: 0 auto;
     /* pre-allocate room so step swaps don't yank the page */
     min-height: 480px;
@@ -1181,13 +1189,14 @@ footer {
 .funnel-headline {
     font-family: var(--font-sans);
     /* hero-scale: dominant top-of-page presence */
-    font-size: clamp(36px, 5.4vw, 64px);
+    font-size: clamp(30px, 8vw, 52px);
     font-weight: 800;
     color: var(--fg);
     letter-spacing: -0.025em;
     line-height: 1.08;
-    margin-bottom: 1.25rem;
-    max-width: 920px;
+    margin-top: rem;
+    margin-bottom: 2rem;
+    max-width: 100%;
 }
 
 .funnel-sub {
@@ -1224,9 +1233,9 @@ footer {
 .funnel-back:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
 
 .funnel-back-arrow {
-    font-family: var(--font-sans);
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1;
+    vertical-align: middle;
 }
 
 .funnel-actions {
@@ -1308,8 +1317,8 @@ footer {
     flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 0;
-    margin-bottom: 1rem;
-    max-width: 880px;
+    margin-bottom: 2rem;
+    max-width: 100%;
     flex-shrink: 0;
 }
 
@@ -1323,7 +1332,7 @@ footer {
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    padding: 0.45rem 0.75rem;
+    padding: 0.55rem 1rem;
     line-height: 1;
     transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
@@ -1421,11 +1430,11 @@ footer {
     display: flex;
     align-items: center;
     gap: 1.1rem;
-    padding: 1.1rem 1.4rem;
+    padding: 1rem 1.4rem;
     cursor: pointer;
     font-family: var(--font-sans);
     /* bigger per shivam: cards should carry weight, not feel like table rows */
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 500;
     color: var(--fg);
     line-height: 1.35;
@@ -1442,32 +1451,35 @@ footer {
 
 .funnel-checkbox-box {
     flex-shrink: 0;
-    width: 18px;
-    height: 18px;
-    border: 1.5px solid var(--fg);
-    background: transparent;
+    width: 20px;
+    height: 20px;
+    border-radius: 0;
+    border: 1.5px solid #c7c7cc;
+    background: #fff;
     position: relative;
-    transition: background 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.18s ease, border-color 0.18s ease;
 }
 
 .funnel-checkbox:checked + .funnel-checkbox-box {
-    background: var(--terminal-bg);
+    background: #1c1c1e;
+    border-color: #1c1c1e;
 }
 
 .funnel-checkbox:checked + .funnel-checkbox-box::after {
     content: '';
     position: absolute;
-    left: 5px;
-    top: 1px;
     width: 5px;
-    height: 10px;
-    border: solid var(--terminal-fg);
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
+    height: 9px;
+    border: solid #fff;
+    border-width: 0 1.8px 1.8px 0;
+    transform: rotate(45deg) translate(-1px, -1px);
 }
 
 .funnel-checkbox:focus-visible + .funnel-checkbox-box {
-    outline: 2px solid var(--fg);
+    outline: 2px solid #1c1c1e;
     outline-offset: 3px;
 }
 
@@ -1671,6 +1683,11 @@ footer {
 /* Removed — all sections visible immediately for clean single-scroll experience */
 
 /* === RESPONSIVE === */
+@media (max-width: 900px) {
+    /* funnel stage: grow to full width on tablet */
+    .funnel-stage { max-width: 90%; }
+}
+
 @media (max-width: 768px) {
     .nav-toggle { display: block; }
 
@@ -1682,10 +1699,12 @@ footer {
         right: 0;
         background: rgba(237, 232, 224, 0.98);
         backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
         flex-direction: column;
-        padding: 1rem clamp(1.5rem, 8vw, 10rem);
+        padding: 1rem 1.5rem;
         border-bottom: 1px solid var(--border);
         gap: 0;
+        z-index: 99;
     }
 
     .nav-right.open { display: flex; }
@@ -1706,19 +1725,21 @@ footer {
     .hero {
         min-height: auto;
         grid-template-columns: 1fr;
-        padding: 3rem 1.5rem;
-        padding-top: calc(56px + 3rem);
+        padding: 3rem 1.25rem;
+        padding-top: calc(56px + 2rem);
         gap: 2rem;
     }
 
-    .hero h1 { font-size: clamp(36px, 10vw, 64px); }
+    .hero h1 { font-size: clamp(32px, 9vw, 56px); }
 
     .hero-chat {
         max-width: 100%;
         justify-self: stretch;
     }
 
-    .section { padding: 4rem 1.5rem; }
+    .chat-body { height: 300px; }
+
+    .section { padding: 3rem 1.25rem; }
 
     .what-layout {
         grid-template-columns: 1fr;
@@ -1730,34 +1751,38 @@ footer {
     .use-cases-grid { grid-template-columns: 1fr; }
     .process-steps { grid-template-columns: 1fr; }
 
-    .compare-row { grid-template-columns: 160px 1fr; }
+    .compare-row { grid-template-columns: 140px 1fr; }
 
     .pricing-tiers { grid-template-columns: 1fr; }
     .pricing-tier { border-right: none; border-bottom: 1px solid var(--border); }
     .pricing-tier.featured { border-bottom-color: #333; }
     .pricing-tier:last-child { border-bottom: none; }
 
-    .final-cta { padding: 5rem 1.5rem; }
+    .final-cta { padding: 4rem 1.25rem; }
 
-    .footer-content { flex-direction: column; align-items: flex-start; }
+    .footer-content { flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+    .footer-links { flex-wrap: wrap; gap: 1rem; }
     .about-links { flex-wrap: wrap; }
 
     /* funnel */
     .funnel-section {
-        padding: 2rem 1.25rem;
-        min-height: auto;
+        padding: 1.25rem 1rem;
+        padding-top: calc(56px + 1rem);
+        min-height: 100dvh;
     }
 
-    .funnel-stage { min-height: auto; display: block; }
+    .funnel-stage { max-width: 100%; min-height: auto; display: block; }
 
     .funnel-step-1 { display: block; flex: none; }
 
-    .funnel-headline { font-size: clamp(28px, 6vw, 40px); line-height: 1.1; }
+    .funnel-headline { font-size: clamp(26px, 7vw, 40px); line-height: 1.1; margin-bottom: 1.25rem; }
+    .funnel-sub { margin-bottom: 1rem; }
 
-    .funnel-chips { gap: 0.4rem; flex-wrap: wrap; }
+    .funnel-chips { gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .funnel-chip { font-size: 11px; padding: 0.5rem 0.9rem; }
 
-    .funnel-check-label { padding: 0.7rem 1rem; font-size: 0.9rem; }
-    .funnel-checkbox-box { width: 18px; height: 18px; }
+    .funnel-check-label { padding: 0.75rem 1rem; font-size: 0.875rem; gap: 0.75rem; }
+    .funnel-checkbox-box { width: 18px; height: 18px; border-radius: 0; }
 
     /* mobile: collapse to single column so cards aren't squeezed */
     .funnel-checklist { grid-template-columns: 1fr; }
@@ -1767,11 +1792,12 @@ footer {
     .funnel-checklist-panel { overflow-y: visible; }
 
     .funnel-actions-sticky { margin-top: 1.25rem; }
+    .funnel-actions { gap: 0.75rem; flex-wrap: wrap; }
 
     .funnel-solution-card {
         grid-template-columns: 1fr;
         gap: 0.75rem;
-        padding: 1.25rem 1.25rem;
+        padding: 1.25rem 1rem;
     }
 
     .funnel-email-row { flex-direction: column; }
@@ -1780,22 +1806,36 @@ footer {
         text-align: center;
     }
 
-    .funnel-actions { gap: 1rem; }
-    .funnel-cta-big { padding: 1.2rem 2.4rem; font-size: 13px; }
+    .funnel-cta-big { padding: 1.1rem 2rem; font-size: 13px; width: 100%; text-align: center; }
+
+    .cta-btn { padding: 1rem 2rem; font-size: 12px; }
 }
 
 @media (max-width: 480px) {
-    .hero h1 { font-size: 32px; }
+    .hero h1 { font-size: 28px; }
+    .hero-sub { font-size: 11px; }
 
     .compare-row { grid-template-columns: 1fr; }
     .compare-label {
         border-right: none;
         border-bottom: none;
-        padding-bottom: 0;
+        padding-bottom: 0.25rem;
     }
+    .compare-value { padding-top: 0.25rem; }
 
-    .funnel-headline { font-size: 28px; line-height: 1.1; }
-    .funnel-chip { font-size: 9px; padding: 0.45rem 0.7rem; }
-    .funnel-check-label { padding: 0.7rem 1rem; font-size: 0.9rem; gap: 0.75rem; }
-    .funnel-checkbox-box { width: 18px; height: 18px; }
+    .funnel-section { padding-top: calc(56px + 0.75rem); }
+    .funnel-headline { font-size: 24px; line-height: 1.12; }
+    .funnel-chip { font-size: 10px; padding: 0.45rem 0.75rem; }
+    .funnel-check-label { padding: 0.65rem 0.875rem; font-size: 0.85rem; gap: 0.65rem; }
+    .funnel-checkbox-box { width: 17px; height: 17px; }
+
+    .funnel-solution-card { padding: 1rem 0.875rem; }
+
+    .section { padding: 2.5rem 1rem; }
+    .final-cta { padding: 3rem 1rem; }
+    footer { padding: 1.5rem 1rem; }
+
+    .pricing-tier { padding: 1.5rem; }
+
+    .cta-btn { padding: 0.9rem 1.6rem; }
 }

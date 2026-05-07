@@ -8,7 +8,7 @@
 // reflected in the URL hash (#step=N) so the back button works.
 (function () {
     var STORAGE_KEY = 'silicon_funnel_state';
-    var TG_URL = 'https://t.me/Welcome_to_Silicon_bot';
+    var TG_URL = 'https://t.me/Welcome_to_Silicon_bot?text=Hi%2C+I%27m+interested+in+Silicon%21';
     var MAX_STEP = 4;
 
     var root = document.getElementById('funnel-root');
@@ -178,7 +178,7 @@
             'aria-label': 'go back',
             onclick: function () { goTo(targetStep); }
         }, [
-            el('span', { class: 'funnel-back-arrow', 'aria-hidden': 'true', text: '←' }),
+            el('i', { class: 'ph ph-arrow-left funnel-back-arrow', 'aria-hidden': 'true' }),
             ' ' + (label || 'back')
         ]);
     }
@@ -241,7 +241,7 @@
         var heading = el('h1', {
             class: 'funnel-headline',
             id: 'funnel-headline',
-            text: 'hey company founder, what problem are you facing right now?'
+            text: 'hey Boss!! what problem are you facing right now?'
         });
 
         // chip row — every category, first selected by default if none chosen
@@ -305,6 +305,7 @@
                         saveState();
                         li.classList.toggle('is-checked', input.checked);
                         refreshContinue();
+                        refreshChips();
                     }
                 });
                 var box = el('span', { class: 'funnel-checkbox-box', 'aria-hidden': 'true' });
@@ -334,6 +335,19 @@
             }
         }
 
+        function chipLabel(cat) {
+            var n = (state.checkedByCategory[cat.key] || []).length;
+            return cat.label.toLowerCase() + (n > 0 ? ' (' + n + ')' : '');
+        }
+
+        function refreshChips() {
+            Array.prototype.forEach.call(chips.children, function (c) {
+                var key = c.getAttribute('data-key');
+                var cat = findCategory(key);
+                if (cat) c.textContent = chipLabel(cat);
+            });
+        }
+
         problems.forEach(function (cat) {
             var isActive = state.currentCategory === cat.key;
             var chip = el('button', {
@@ -354,7 +368,7 @@
                     });
                     renderPanel(cat.key, true);
                 }
-            }, cat.label.toLowerCase());
+            }, chipLabel(cat));
             chips.appendChild(chip);
         });
 
@@ -556,8 +570,18 @@
             ? el('div', { class: 'funnel-echo' }, echoChildren)
             : null;
 
+        var tgHref = TG_URL;
+        var allProblems = [];
+        categoriesWithSelections().forEach(function (catKey) {
+            checkedFor(catKey).forEach(function (t) { allProblems.push('- ' + t); });
+        });
+        if (allProblems.length) {
+            var msg = 'Hey Silicon. These are the things I want to fix\n\n' + allProblems.join('\n');
+            tgHref = 'https://t.me/Welcome_to_Silicon_bot?text=' + encodeURIComponent(msg);
+        }
+
         var bigCta = el('a', {
-            href: TG_URL,
+            href: tgHref,
             target: '_blank',
             rel: 'noopener',
             class: 'cta-btn funnel-cta funnel-cta-big'
