@@ -1,37 +1,72 @@
 // Problem-discovery funnel for the team-of-silicons landing page.
-// 5-step state machine, vanilla JS, no framework.
-//   step 1 — pick a category
-//   step 2 — check the problems that resonate
-//   step 3 — show how silicon handles each picked problem
-//   step 4 — capture an email
-//   step 5 — push to telegram
+// 4-step state machine, vanilla JS, no framework.
+//   step 1 — combined: pick category(s) + check problems across categories
+//   step 2 — show how silicon handles each picked problem (grouped)
+//   step 3 — capture an email
+//   step 4 — push to telegram
 // State persists in localStorage (key: silicon_funnel_state) and is
 // reflected in the URL hash (#step=N) so the back button works.
 (function () {
     var STORAGE_KEY = 'silicon_funnel_state';
     var TG_URL = 'https://t.me/Welcome_to_Silicon_bot';
-    var MAX_STEP = 5;
+    var MAX_STEP = 4;
 
     var root = document.getElementById('funnel-root');
     if (!root) return;
 
     var problems = window.SILICON_PROBLEMS || [];
+    var firstCategoryKey = problems.length ? problems[0].key : null;
 
     // ---- state -------------------------------------------------------------
+    // checkedByCategory: { [catKey]: [problemText, ...] }
     var defaultState = {
         step: 1,
-        category: null,        // category key
-        checked: [],           // array of problem texts
+        currentCategory: firstCategoryKey,
+        checkedByCategory: {},
         email: '',
         emailSubmitted: false
     };
+
+    function migrateLegacy(parsed) {
+        // v1 shape: { step, category, checked, email, emailSubmitted }
+        // v2 shape: { step, currentCategory, checkedByCategory, email, emailSubmitted }
+        if (parsed && !parsed.checkedByCategory) {
+            var migrated = {
+                step: 1,
+                currentCategory: parsed.category || firstCategoryKey,
+                checkedByCategory: {},
+                email: parsed.email || '',
+                emailSubmitted: !!parsed.emailSubmitted
+            };
+            if (parsed.category && Array.isArray(parsed.checked) && parsed.checked.length) {
+                migrated.checkedByCategory[parsed.category] = parsed.checked.slice();
+            }
+            // collapse old step numbers: 1+2 -> 1, 3 -> 2, 4 -> 3, 5 -> 4
+            var oldStep = parseInt(parsed.step, 10);
+            if (oldStep === 1 || oldStep === 2) migrated.step = 1;
+            else if (oldStep === 3) migrated.step = 2;
+            else if (oldStep === 4) migrated.step = 3;
+            else if (oldStep === 5) migrated.step = 4;
+            return migrated;
+        }
+        return parsed;
+    }
 
     function loadState() {
         try {
             var raw = localStorage.getItem(STORAGE_KEY);
             if (!raw) return Object.assign({}, defaultState);
             var parsed = JSON.parse(raw);
-            return Object.assign({}, defaultState, parsed);
+            parsed = migrateLegacy(parsed);
+            var merged = Object.assign({}, defaultState, parsed);
+            // ensure currentCategory points at a real key
+            if (!findCategory(merged.currentCategory)) {
+                merged.currentCategory = firstCategoryKey;
+            }
+            if (!merged.checkedByCategory || typeof merged.checkedByCategory !== 'object') {
+                merged.checkedByCategory = {};
+            }
+            return merged;
         } catch (e) {
             return Object.assign({}, defaultState);
         }
@@ -41,6 +76,56 @@
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         } catch (e) { /* private mode etc — ignore */ }
+    }
+
+    // ---- helpers (defined before loadState uses findCategory) -------------
+    function findCategory(key) {
+        for (var i = 0; i < problems.length; i++) {
+            if (problems[i].key === key) return problems[i];
+        }
+        return null;
+    }
+
+    function findProblem(catKey, text) {
+        var cat = findCategory(catKey);
+        if (!cat) return null;
+        for (var i = 0; i < cat.problems.length; i++) {
+            if (cat.problems[i].text === text) return cat.problems[i];
+        }
+        return null;
+    }
+
+    function totalChecked() {
+        var n = 0;
+        for (var k in state.checkedByCategory) {
+            if (Object.prototype.hasOwnProperty.call(state.checkedByCategory, k)) {
+                n += (state.checkedByCategory[k] || []).length;
+            }
+        }
+        return n;
+    }
+
+    function categoriesWithSelections() {
+        var keys = [];
+        // preserve the canonical category order from the catalog
+        problems.forEach(function (cat) {
+            var arr = state.checkedByCategory[cat.key];
+            if (arr && arr.length) keys.push(cat.key);
+        });
+        return keys;
+    }
+
+    function checkedFor(catKey) {
+        return (state.checkedByCategory[catKey] || []).slice();
+    }
+
+    function setChecked(catKey, text, on) {
+        var arr = state.checkedByCategory[catKey] || [];
+        var idx = arr.indexOf(text);
+        if (on && idx === -1) arr.push(text);
+        else if (!on && idx !== -1) arr.splice(idx, 1);
+        if (arr.length) state.checkedByCategory[catKey] = arr;
+        else delete state.checkedByCategory[catKey];
     }
 
     var state = loadState();
@@ -61,23 +146,6 @@
         } else {
             window.location.hash = hash;
         }
-    }
-
-    // ---- helpers -----------------------------------------------------------
-    function findCategory(key) {
-        for (var i = 0; i < problems.length; i++) {
-            if (problems[i].key === key) return problems[i];
-        }
-        return null;
-    }
-
-    function findProblem(catKey, text) {
-        var cat = findCategory(catKey);
-        if (!cat) return null;
-        for (var i = 0; i < cat.problems.length; i++) {
-            if (cat.problems[i].text === text) return cat.problems[i];
-        }
-        return null;
     }
 
     function el(tag, attrs, children) {
@@ -161,8 +229,6 @@
     }
 
     function scrollFunnelIntoView() {
-        // bring the funnel back into view after a step swap so the user
-        // doesn't land mid-content. respect the sticky header.
         var rect = root.getBoundingClientRect();
         if (rect.top < 0 || rect.top > 80) {
             var top = window.pageYOffset + rect.top - 16;
@@ -170,123 +236,147 @@
         }
     }
 
-    // ---- step renderers ----------------------------------------------------
+    // ---- step 1: combined picker ------------------------------------------
     function renderStep1() {
         var heading = el('h1', {
             class: 'funnel-headline',
+            id: 'funnel-headline',
             text: 'hey company founder, what problem are you facing right now?'
         });
-        var sub = el('p', {
-            class: 'funnel-sub',
-            text: 'pick the area where it hurts most. silicon meets you there.'
-        });
 
+        // chip row — every category, first selected by default if none chosen
         var chips = el('div', {
             class: 'funnel-chips',
-            role: 'radiogroup',
+            role: 'tablist',
             'aria-label': 'problem categories'
         });
-        problems.forEach(function (cat) {
-            var chip = el('button', {
-                type: 'button',
-                role: 'radio',
-                'aria-checked': state.category === cat.key ? 'true' : 'false',
-                class: 'funnel-chip' + (state.category === cat.key ? ' is-selected' : ''),
-                'data-key': cat.key,
-                onclick: function () {
-                    state.category = cat.key;
-                    state.checked = []; // reset checked list when category changes
-                    saveState();
-                    goTo(2);
-                }
-            }, cat.label.toLowerCase());
-            chips.appendChild(chip);
-        });
 
-        return el('section', {
-            class: 'funnel-step funnel-step-1',
-            'aria-labelledby': 'funnel-headline',
-            'data-step': '1'
-        }, [heading, sub, chips]);
-    }
-
-    function renderStep2() {
-        var cat = findCategory(state.category);
-        if (!cat) { goTo(1, { replaceHash: true }); return el('section'); }
-
-        var heading = el('h1', {
-            class: 'funnel-headline',
-            text: 'which of these sound like you?'
-        });
-        var sub = el('p', {
-            class: 'funnel-sub',
-            text: 'check anything that hits. you can pick more than one.'
-        });
-
-        var chosenLabel = el('div', { class: 'funnel-pill-row' }, [
-            el('span', { class: 'funnel-pill-label', text: 'category' }),
-            el('span', { class: 'funnel-pill-value', text: cat.label.toLowerCase() })
-        ]);
-
-        var list = el('ul', { class: 'funnel-checklist', role: 'list' });
-        cat.problems.forEach(function (p, i) {
-            var id = 'p-' + state.category + '-' + i;
-            var checked = state.checked.indexOf(p.text) !== -1;
-            var input = el('input', {
-                type: 'checkbox',
-                id: id,
-                class: 'funnel-checkbox',
-                checked: checked ? 'checked' : false,
-                onchange: function () {
-                    var idx = state.checked.indexOf(p.text);
-                    if (input.checked && idx === -1) state.checked.push(p.text);
-                    else if (!input.checked && idx !== -1) state.checked.splice(idx, 1);
-                    saveState();
-                    continueBtn.disabled = state.checked.length === 0;
-                    li.classList.toggle('is-checked', input.checked);
-                }
-            });
-            var box = el('span', { class: 'funnel-checkbox-box', 'aria-hidden': 'true' });
-            var label = el('label', { class: 'funnel-check-label', for: id }, [
-                input,
-                box,
-                el('span', { class: 'funnel-check-text', text: p.text })
-            ]);
-            var li = el('li', { class: 'funnel-check-item' + (checked ? ' is-checked' : '') }, label);
-            list.appendChild(li);
+        // panel that holds the active category's problems; replaceable
+        var panel = el('div', {
+            class: 'funnel-checklist-panel',
+            id: 'funnel-checklist-panel',
+            'aria-live': 'polite'
         });
 
         var continueBtn = el('button', {
             type: 'button',
             class: 'cta-btn funnel-cta',
-            disabled: state.checked.length === 0 ? 'disabled' : false,
-            onclick: function () { if (state.checked.length > 0) goTo(3); }
+            disabled: totalChecked() === 0 ? 'disabled' : false,
+            onclick: function () {
+                if (totalChecked() > 0) goTo(2);
+            }
         }, 'continue');
 
-        var change = el('button', {
-            type: 'button',
-            class: 'funnel-text-link',
-            onclick: function () { goTo(1); }
-        }, 'pick a different category');
+        var counter = el('span', {
+            class: 'funnel-count',
+            'aria-live': 'polite'
+        });
 
-        var actions = el('div', { class: 'funnel-actions' }, [continueBtn, change]);
+        function refreshContinue() {
+            var n = totalChecked();
+            continueBtn.disabled = n === 0;
+            if (n === 0) {
+                counter.textContent = '';
+            } else {
+                var cats = categoriesWithSelections().length;
+                counter.textContent =
+                    n + ' problem' + (n === 1 ? '' : 's') +
+                    ' across ' + cats + ' categor' + (cats === 1 ? 'y' : 'ies');
+            }
+        }
+
+        function renderPanel(catKey, animate) {
+            var cat = findCategory(catKey);
+            if (!cat) return;
+            var prevList = panel.firstElementChild;
+
+            var list = el('ul', { class: 'funnel-checklist', role: 'list' });
+            var checked = checkedFor(catKey);
+            cat.problems.forEach(function (p, i) {
+                var id = 'p-' + catKey + '-' + i;
+                var isChecked = checked.indexOf(p.text) !== -1;
+                var input = el('input', {
+                    type: 'checkbox',
+                    id: id,
+                    class: 'funnel-checkbox',
+                    checked: isChecked ? 'checked' : false,
+                    onchange: function () {
+                        setChecked(catKey, p.text, input.checked);
+                        saveState();
+                        li.classList.toggle('is-checked', input.checked);
+                        refreshContinue();
+                    }
+                });
+                var box = el('span', { class: 'funnel-checkbox-box', 'aria-hidden': 'true' });
+                var label = el('label', { class: 'funnel-check-label', for: id }, [
+                    input,
+                    box,
+                    el('span', { class: 'funnel-check-text', text: p.text })
+                ]);
+                var li = el('li', { class: 'funnel-check-item' + (isChecked ? ' is-checked' : '') }, label);
+                list.appendChild(li);
+            });
+
+            if (animate && prevList) {
+                prevList.classList.add('funnel-checklist-leave');
+                setTimeout(function () {
+                    if (prevList.parentNode) prevList.parentNode.removeChild(prevList);
+                }, 160);
+                list.classList.add('funnel-checklist-enter');
+                panel.appendChild(list);
+                // reflow, then reveal
+                // eslint-disable-next-line no-unused-expressions
+                list.offsetHeight;
+                list.classList.remove('funnel-checklist-enter');
+            } else {
+                panel.innerHTML = '';
+                panel.appendChild(list);
+            }
+        }
+
+        problems.forEach(function (cat) {
+            var isActive = state.currentCategory === cat.key;
+            var chip = el('button', {
+                type: 'button',
+                role: 'tab',
+                'aria-selected': isActive ? 'true' : 'false',
+                class: 'funnel-chip' + (isActive ? ' is-selected' : ''),
+                'data-key': cat.key,
+                onclick: function () {
+                    if (state.currentCategory === cat.key) return;
+                    state.currentCategory = cat.key;
+                    saveState();
+                    // update chips
+                    Array.prototype.forEach.call(chips.children, function (c) {
+                        var on = c.getAttribute('data-key') === cat.key;
+                        c.classList.toggle('is-selected', on);
+                        c.setAttribute('aria-selected', on ? 'true' : 'false');
+                    });
+                    renderPanel(cat.key, true);
+                }
+            }, cat.label.toLowerCase());
+            chips.appendChild(chip);
+        });
+
+        // initial panel
+        renderPanel(state.currentCategory, false);
+        refreshContinue();
+
+        var actions = el('div', { class: 'funnel-actions funnel-actions-sticky' }, [
+            continueBtn,
+            counter
+        ]);
 
         return el('section', {
-            class: 'funnel-step funnel-step-2',
-            'data-step': '2'
-        }, [
-            backLink(1, 'back to categories'),
-            heading,
-            sub,
-            chosenLabel,
-            list,
-            actions
-        ]);
+            class: 'funnel-step funnel-step-1',
+            'aria-labelledby': 'funnel-headline',
+            'data-step': '1'
+        }, [heading, chips, panel, actions]);
     }
 
-    function renderStep3() {
-        var cat = findCategory(state.category);
-        if (!cat || state.checked.length === 0) { goTo(1, { replaceHash: true }); return el('section'); }
+    // ---- step 2: solutions, grouped by category ---------------------------
+    function renderStep2() {
+        if (totalChecked() === 0) { goTo(1, { replaceHash: true }); return el('section'); }
 
         var heading = el('h1', {
             class: 'funnel-headline',
@@ -297,45 +387,60 @@
             text: 'no roadmap. no waitlist. these run today.'
         });
 
-        var cards = el('div', { class: 'funnel-solution-grid' });
-        state.checked.forEach(function (text) {
-            var p = findProblem(state.category, text);
-            if (!p) return;
-            var card = el('article', { class: 'funnel-solution-card' }, [
-                el('div', { class: 'funnel-solution-problem' }, [
-                    el('span', { class: 'funnel-solution-label', text: 'problem' }),
-                    el('p', { text: p.text })
-                ]),
-                el('div', { class: 'funnel-solution-answer' }, [
-                    el('span', { class: 'funnel-solution-label', text: 'silicon' }),
-                    el('p', { text: p.solution })
-                ])
-            ]);
-            cards.appendChild(card);
+        var groups = el('div', { class: 'funnel-solution-groups' });
+
+        categoriesWithSelections().forEach(function (catKey) {
+            var cat = findCategory(catKey);
+            if (!cat) return;
+            var checked = checkedFor(catKey);
+            if (!checked.length) return;
+
+            var subhead = el('h2', {
+                class: 'funnel-solution-group-label',
+                text: cat.label.toLowerCase()
+            });
+            var grid = el('div', { class: 'funnel-solution-grid' });
+            checked.forEach(function (text) {
+                var p = findProblem(catKey, text);
+                if (!p) return;
+                var card = el('article', { class: 'funnel-solution-card' }, [
+                    el('div', { class: 'funnel-solution-problem' }, [
+                        el('span', { class: 'funnel-solution-label', text: 'problem' }),
+                        el('p', { text: p.text })
+                    ]),
+                    el('div', { class: 'funnel-solution-answer' }, [
+                        el('span', { class: 'funnel-solution-label', text: 'silicon' }),
+                        el('p', { text: p.solution })
+                    ])
+                ]);
+                grid.appendChild(card);
+            });
+            groups.appendChild(el('section', { class: 'funnel-solution-group' }, [subhead, grid]));
         });
 
         var continueBtn = el('button', {
             type: 'button',
             class: 'cta-btn funnel-cta',
-            onclick: function () { goTo(4); }
+            onclick: function () { goTo(3); }
         }, 'continue');
 
         var actions = el('div', { class: 'funnel-actions' }, [continueBtn]);
 
         return el('section', {
-            class: 'funnel-step funnel-step-3',
-            'data-step': '3'
+            class: 'funnel-step funnel-step-2',
+            'data-step': '2'
         }, [
-            backLink(2, 'edit my answers'),
+            backLink(1, 'edit my answers'),
             heading,
             sub,
-            cards,
+            groups,
             actions
         ]);
     }
 
-    function renderStep4() {
-        if (state.checked.length === 0) { goTo(1, { replaceHash: true }); return el('section'); }
+    // ---- step 3: email ---------------------------------------------------
+    function renderStep3() {
+        if (totalChecked() === 0) { goTo(1, { replaceHash: true }); return el('section'); }
 
         var heading = el('h1', {
             class: 'funnel-headline',
@@ -379,14 +484,11 @@
                 state.emailSubmitted = true;
                 saveState();
 
-                // TODO: POST { email, category, checked } to the lead-capture
-                // endpoint here. Shivam will wire this up later.
                 console.log('silicon_lead_email_captured:', val, {
-                    category: state.category,
-                    checked: state.checked
+                    checkedByCategory: state.checkedByCategory
                 });
 
-                goTo(5);
+                goTo(4);
             }
         }, [
             el('div', { class: 'funnel-email-row' }, [input, submit]),
@@ -396,14 +498,14 @@
         var skip = el('button', {
             type: 'button',
             class: 'funnel-text-link',
-            onclick: function () { goTo(5); }
+            onclick: function () { goTo(4); }
         }, 'skip — just take me to telegram');
 
         return el('section', {
-            class: 'funnel-step funnel-step-4',
-            'data-step': '4'
+            class: 'funnel-step funnel-step-3',
+            'data-step': '3'
         }, [
-            backLink(3, 'back'),
+            backLink(2, 'back'),
             heading,
             sub,
             form,
@@ -411,9 +513,8 @@
         ]);
     }
 
-    function renderStep5() {
-        var cat = findCategory(state.category);
-
+    // ---- step 4: telegram CTA --------------------------------------------
+    function renderStep4() {
         var heading = el('h1', {
             class: 'funnel-headline',
             text: 'last step — try silicon yourself.'
@@ -423,30 +524,37 @@
             text: 'silicon lives in telegram. say hi, ask anything, see how it feels.'
         });
 
+        var n = totalChecked();
+        var catCount = categoriesWithSelections().length;
+        var flagged = n
+            ? 'you flagged ' + n + ' problem' + (n === 1 ? '' : 's') +
+              ' across ' + catCount + ' categor' + (catCount === 1 ? 'y' : 'ies') + '.'
+            : '';
+
         var thanks = state.emailSubmitted
-            ? 'thanks. we’ll be in touch at ' + state.email + '.'
-            : 'no email needed to try — jump straight in.';
+            ? (flagged ? flagged + ' we’ll be in touch at ' + state.email + '.'
+                       : 'thanks. we’ll be in touch at ' + state.email + '.')
+            : (flagged ? flagged + ' no email needed to try — jump straight in.'
+                       : 'no email needed to try — jump straight in.');
 
         var thanksEl = el('p', { class: 'funnel-thanks', text: thanks });
 
         var echoChildren = [];
-        if (cat) {
-            echoChildren.push(el('div', { class: 'funnel-echo-row' }, [
-                el('span', { class: 'funnel-echo-label', text: 'your area' }),
-                el('span', { class: 'funnel-echo-value', text: cat.label.toLowerCase() })
-            ]));
-        }
-        if (state.checked.length) {
+        categoriesWithSelections().forEach(function (catKey) {
+            var cat = findCategory(catKey);
+            if (!cat) return;
             var problemList = el('ul', { class: 'funnel-echo-list' });
-            state.checked.forEach(function (t) {
+            checkedFor(catKey).forEach(function (t) {
                 problemList.appendChild(el('li', { text: t }));
             });
             echoChildren.push(el('div', { class: 'funnel-echo-row funnel-echo-row-stack' }, [
-                el('span', { class: 'funnel-echo-label', text: 'what we’ll help with' }),
+                el('span', { class: 'funnel-echo-label', text: cat.label.toLowerCase() }),
                 problemList
             ]));
-        }
-        var echo = el('div', { class: 'funnel-echo' }, echoChildren);
+        });
+        var echo = echoChildren.length
+            ? el('div', { class: 'funnel-echo' }, echoChildren)
+            : null;
 
         var bigCta = el('a', {
             href: TG_URL,
@@ -455,61 +563,54 @@
             class: 'cta-btn funnel-cta funnel-cta-big'
         }, 'try silicon on telegram');
 
-        var pricingLink = el('a', {
-            href: '#pricing',
-            class: 'funnel-text-link',
-            onclick: function () {
-                // smooth scroll handled by html { scroll-behavior: smooth }
-            }
-        }, 'or, see pricing');
-
         var startOver = el('button', {
             type: 'button',
             class: 'funnel-text-link funnel-text-link-muted',
             onclick: function () {
-                state = Object.assign({}, defaultState);
+                state = Object.assign({}, defaultState, {
+                    currentCategory: firstCategoryKey,
+                    checkedByCategory: {}
+                });
                 saveState();
                 goTo(1);
             }
         }, 'start over');
 
         var actions = el('div', { class: 'funnel-actions' }, [bigCta]);
-        var secondary = el('div', { class: 'funnel-actions funnel-actions-secondary' }, [pricingLink, startOver]);
+        var secondary = el('div', { class: 'funnel-actions funnel-actions-secondary' }, [startOver]);
 
-        return el('section', {
-            class: 'funnel-step funnel-step-5',
-            'data-step': '5'
-        }, [
-            backLink(4, 'back'),
+        var children = [
+            backLink(3, 'back'),
             heading,
             sub,
-            thanksEl,
-            echo,
-            actions,
-            secondary
-        ]);
+            thanksEl
+        ];
+        if (echo) children.push(echo);
+        children.push(actions);
+        children.push(secondary);
+
+        return el('section', {
+            class: 'funnel-step funnel-step-4',
+            'data-step': '4'
+        }, children);
     }
 
     var renderers = {
         1: renderStep1,
         2: renderStep2,
         3: renderStep3,
-        4: renderStep4,
-        5: renderStep5
+        4: renderStep4
     };
 
     function clampStep() {
-        // can't be on step 2+ without a chosen category, can't be on
-        // step 3+ without any checked problems
-        if (state.step >= 2 && !state.category) state.step = 1;
-        if (state.step >= 3 && state.checked.length === 0) state.step = 2;
+        // can't be on step 2+ without any checked problems anywhere
+        if (state.step >= 2 && totalChecked() === 0) state.step = 1;
         if (state.step < 1) state.step = 1;
         if (state.step > MAX_STEP) state.step = MAX_STEP;
     }
 
     function render() {
         clampStep();
-        // keep hash in sync with the actually-rendered step
         writeHashStep(state.step, true);
         saveState();
         var fn = renderers[state.step] || renderStep1;
