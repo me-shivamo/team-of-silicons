@@ -1389,6 +1389,9 @@ footer {
     margin: 0;
     background: var(--bg);
     transition: opacity 0.15s ease;
+    /* 2-col grid on desktop so 8 cards become 4 rows x 2 cols and fit in viewport */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 }
 
 .funnel-checklist-enter { opacity: 0; }
@@ -1401,10 +1404,14 @@ footer {
 
 .funnel-check-item {
     border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
     transition: background 0.15s ease;
 }
 
-.funnel-check-item:last-child { border-bottom: none; }
+/* zero out the trailing borders so the grid edges look clean */
+.funnel-check-item:nth-child(2n) { border-right: none; }
+.funnel-check-item:nth-last-child(-n + 2):not(:nth-child(2n+1):last-child) { border-bottom: none; }
+.funnel-check-item:last-child { border-bottom: none; border-right: none; }
 .funnel-check-item:hover { background: var(--surface-hover); }
 .funnel-check-item.is-checked { background: var(--surface-hover); }
 
@@ -1749,6 +1756,11 @@ footer {
 
     .funnel-check-label { padding: 0.95rem 1.1rem; font-size: 1rem; }
     .funnel-checkbox-box { width: 22px; height: 22px; }
+
+    /* mobile: collapse to single column so cards aren't squeezed */
+    .funnel-checklist { grid-template-columns: 1fr; }
+    .funnel-check-item { border-right: none; border-bottom: 1px solid var(--border); }
+    .funnel-check-item:last-child { border-bottom: none; }
 
     .funnel-checklist-panel { overflow-y: visible; }
 
