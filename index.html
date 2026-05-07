@@ -38,145 +38,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
     <script src="static/js/splash.js"></script>
 
-    <!--
-    ============================================================================
-    HIDDEN PER SHIVAM (2026-05-06): landing page simplified to funnel-only.
-    Header / nav, pricing, security, footer are kept in source for easy restore
-    but commented out so nothing renders except the funnel.
-    To restore: uncomment the matching block(s) below.
-    ============================================================================
-    -->
-    <!-- BEGIN HIDDEN: HEADER
-    <header>
-        <nav>
-            <div class="nav-left">
-                <a href="#" class="logo">team of silicons</a>
-            </div>
-            <button class="nav-toggle" onclick="document.querySelector('.nav-right').classList.toggle('open')" aria-label="Menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-            </button>
-            <div class="nav-right">
-                <a href="#funnel-root">start</a>
-                <a href="#pricing">pricing</a>
-                <a href="#security">security</a>
-                <a href="https://t.me/Welcome_to_Silicon_bot" target="_blank" rel="noopener" class="nav-cta">try silicon</a>
-            </div>
-        </nav>
-    </header>
-    END HIDDEN: HEADER -->
+    <!-- legacy: see static/legacy/header.html -->
 
     <main>
-        <!-- FUNNEL: problem-discovery state machine. all 5 steps render into #funnel-root. -->
+        <!-- FUNNEL: problem-discovery state machine. all steps render into #funnel-root. -->
         <section class="funnel-section" id="funnel-root" aria-label="problem discovery"></section>
 
-        <!-- BEGIN HIDDEN: PRICING
-        <section class="section" id="pricing">
-            <span class="section-label">pricing</span>
-            <h2>a full AI team.<br>for less than one salary.</h2>
-            <div class="pricing-block">
-                <div class="pricing-tiers">
-                    <!-- STARTER -->
-                    <div class="pricing-tier">
-                        <div class="tier-badge-row"></div>
-                        <div class="tier-name">starter</div>
-                        <div class="tier-amount">$1,500</div>
-                        <div class="tier-period">per month</div>
-                        <ul class="tier-features">
-                            <li>3 silicons on your remote servers</li>
-                            <li>24/7 on-call service</li>
-                            <li>2 expert calls / month</li>
-                            <li>updates within 7 days</li>
-                        </ul>
-                        <div class="tier-audience">great for one team with a specific role. 1–5 people.</div>
-                        <a href="https://t.me/Welcome_to_Silicon_bot" target="_blank" rel="noopener" class="cta-btn cta-btn-outline">try silicon</a>
-                    </div>
-                    <!-- TEAM -->
-                    <div class="pricing-tier featured">
-                        <div class="tier-badge-row"><div class="tier-badge">Most Popular</div></div>
-                        <div class="tier-name">team</div>
-                        <div class="tier-amount">$2,500</div>
-                        <div class="tier-period">per month</div>
-                        <ul class="tier-features">
-                            <li>30 silicons on your remote servers</li>
-                            <li>24/7 on-call service</li>
-                            <li>4 expert calls / month</li>
-                            <li>updates within 2 days</li>
-                        </ul>
-                        <div class="tier-audience">great for startups. 1–20 people.</div>
-                        <div class="tier-api-note">your own subscription with anthropic / openai — no markup, no middleman.</div>
-                        <div class="tier-trust">✓ 7-day trial &nbsp;·&nbsp; cancel anytime &nbsp;·&nbsp; no lock-in</div>
-                        <div class="tier-cta-group">
-                            <a href="https://t.me/Welcome_to_Silicon_bot" target="_blank" rel="noopener" class="cta-btn cta-btn-primary">try silicon (it's free)</a>
-                        </div>
-                    </div>
-                    <!-- ENTERPRISE -->
-                    <div class="pricing-tier">
-                        <div class="tier-badge-row"></div>
-                        <div class="tier-name">enterprise</div>
-                        <div class="tier-amount">$7,000</div>
-                        <div class="tier-period">per month</div>
-                        <ul class="tier-features">
-                            <li>unlimited silicons on remote / on-site servers</li>
-                            <li>24/7 on-call service</li>
-                            <li>16 expert calls / month</li>
-                            <li>updates within 24 hours</li>
-                            <li>custom tools built as needed</li>
-                        </ul>
-                        <div class="tier-audience">growing startups and companies. 1–50 people.</div>
-                        <a href="https://t.me/Welcome_to_Silicon_bot" target="_blank" rel="noopener" class="cta-btn cta-btn-outline">try silicon</a>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- legacy: see static/legacy/pricing.html -->
 
-        END HIDDEN: PRICING -->
-
-        <!-- BEGIN HIDDEN: SECURITY
-        <section class="section" id="security">
-            <span class="section-label">security</span>
-            <h2>nothing leaves your servers.</h2>
-            <div class="security-points">
-                <div class="security-point">
-                    <strong>runs entirely on your infrastructure.</strong>
-                    <span>we never see your data.</span>
-                </div>
-                <div class="security-point">
-                    <strong>your security team signs off first.</strong>
-                    <span>that's not a policy — that's a promise.</span>
-                </div>
-                <div class="security-point">
-                    <strong>everything is open source.</strong>
-                    <span>silicon-browser, silicon-stemcell — MIT licensed. the AI model is claude by anthropic. no black boxes. ever.</span>
-                </div>
-                <div class="security-point">
-                    <strong>configurable, auditable access.</strong>
-                    <span>every silicon's permissions are transparent. new ones start restricted. you decide what they can do.</span>
-                </div>
-            </div>
-        </section>
-        END HIDDEN: SECURITY -->
+        <!-- legacy: see static/legacy/security.html -->
     </main>
 
-    <!-- BEGIN HIDDEN: FOOTER
-    <footer>
-        <div class="footer-content">
-            <div class="footer-left">
-                <span class="footer-logo">team of silicons</span>
-                <span class="footer-tagline">AI employees for your company</span>
-            </div>
-            <div class="footer-links">
-                <a href="https://github.com/unlikefraction/silicon-stemcell" target="_blank" rel="noopener">github</a>
-                <a href="https://unlikefraction.com" target="_blank" rel="noopener">unlikefraction</a>
-            </div>
-            <div class="footer-credit">
-                by <a href="https://x.com/unlikefraction" target="_blank" rel="noopener">@unlikefraction</a>
-            </div>
-        </div>
-    </footer>
-    END HIDDEN: FOOTER -->
-
-    <!-- LEGACY MARKUP RETAINED ABOVE in commented blocks (HEADER / PRICING / SECURITY / FOOTER).
-         To bring any back, uncomment the matching BEGIN/END HIDDEN block. -->
+    <!-- legacy: see static/legacy/footer.html -->
 
 
     <script src="static/js/problems.js"></script>
