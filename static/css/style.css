@@ -1320,7 +1320,7 @@ footer {
     cursor: pointer;
     font-family: var(--font-mono);
     /* small per shivam: chips are the secondary nav, headline is the hero */
-    font-size: 10px;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     padding: 0.45rem 0.75rem;
@@ -1374,7 +1374,7 @@ footer {
 
 .funnel-checklist-panel {
     /* container so the inner list can scroll if 8 problems don't fit */
-    flex: 1 1 auto;
+    flex: 0 0 auto;
     min-height: 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
@@ -1392,6 +1392,8 @@ footer {
     /* 2-col grid on desktop so 8 cards become 4 rows x 2 cols and fit in viewport */
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-auto-rows: min-content;
+    align-items: start;
 }
 
 .funnel-checklist-enter { opacity: 0; }
@@ -1423,7 +1425,7 @@ footer {
     cursor: pointer;
     font-family: var(--font-sans);
     /* bigger per shivam: cards should carry weight, not feel like table rows */
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     font-weight: 500;
     color: var(--fg);
     line-height: 1.35;
@@ -1440,8 +1442,8 @@ footer {
 
 .funnel-checkbox-box {
     flex-shrink: 0;
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     border: 1.5px solid var(--fg);
     background: transparent;
     position: relative;
@@ -1455,10 +1457,10 @@ footer {
 .funnel-checkbox:checked + .funnel-checkbox-box::after {
     content: '';
     position: absolute;
-    left: 7px;
-    top: 2px;
-    width: 7px;
-    height: 13px;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
     border: solid var(--terminal-fg);
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
@@ -1754,8 +1756,8 @@ footer {
 
     .funnel-chips { gap: 0.4rem; flex-wrap: wrap; }
 
-    .funnel-check-label { padding: 0.95rem 1.1rem; font-size: 1rem; }
-    .funnel-checkbox-box { width: 22px; height: 22px; }
+    .funnel-check-label { padding: 0.7rem 1rem; font-size: 0.9rem; }
+    .funnel-checkbox-box { width: 18px; height: 18px; }
 
     /* mobile: collapse to single column so cards aren't squeezed */
     .funnel-checklist { grid-template-columns: 1fr; }
@@ -1794,6 +1796,6 @@ footer {
 
     .funnel-headline { font-size: 28px; line-height: 1.1; }
     .funnel-chip { font-size: 9px; padding: 0.45rem 0.7rem; }
-    .funnel-check-label { padding: 0.85rem 1rem; font-size: 0.95rem; gap: 0.85rem; }
-    .funnel-checkbox-box { width: 20px; height: 20px; }
+    .funnel-check-label { padding: 0.7rem 1rem; font-size: 0.9rem; gap: 0.75rem; }
+    .funnel-checkbox-box { width: 18px; height: 18px; }
 }
