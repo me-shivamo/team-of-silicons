@@ -1,15 +1,14 @@
 // Problem-discovery funnel for the team-of-silicons landing page.
-// 4-step state machine, vanilla JS, no framework.
+// 3-step state machine, vanilla JS, no framework.
 //   step 1 — combined: pick category(s) + check problems across categories
 //   step 2 — show how silicon handles each picked problem (grouped)
-//   step 3 — capture an email
-//   step 4 — push to telegram
+//   step 3 — capture an email, then push to telegram
 // State persists in localStorage (key: silicon_funnel_state) and is
 // reflected in the URL hash (#step=N) so the back button works.
 (function () {
     var STORAGE_KEY = 'silicon_funnel_state';
     var TG_URL = 'https://t.me/Welcome_to_Silicon_bot?text=Hi%2C+I%27m+interested+in+Silicon%21';
-    var MAX_STEP = 4;
+    var MAX_STEP = 3;
 
     var root = document.getElementById('funnel-root');
     if (!root) return;
@@ -392,16 +391,20 @@
     function renderStep2() {
         if (totalChecked() === 0) { goTo(1, { replaceHash: true }); return el('section'); }
 
+        var N = totalChecked();
+        var TOTAL_CATALOG = 88;
+        var X = Math.floor((TOTAL_CATALOG - N) / 10) * 10;
+
         var heading = el('h1', {
-            class: 'funnel-headline',
-            text: "here's how silicon already solves these for our clients."
-        });
-        var sub = el('p', {
-            class: 'funnel-sub',
-            text: 'no roadmap. no waitlist. these run today.'
+            class: 'funnel-headline funnel-step2-headline',
+            text: 'the ' + N + ' problem' + (N === 1 ? '' : 's') +
+                  ' you selected, and ' + X +
+                  '+ others, are problems silicon has already worked on and solved with our clients.'
         });
 
         var groups = el('div', { class: 'funnel-solution-groups' });
+        var groupsWrap = el('div', { class: 'funnel-groups-wrap' });
+        groupsWrap.appendChild(groups);
 
         categoriesWithSelections().forEach(function (catKey) {
             var cat = findCategory(catKey);
@@ -432,13 +435,34 @@
             groups.appendChild(el('section', { class: 'funnel-solution-group' }, [subhead, grid]));
         });
 
-        var continueBtn = el('button', {
+        var bottomCta = el('div', { class: 'funnel-step2-bottom-cta' }, [
+            el('p', {
+                class: 'funnel-step2-bottom-text',
+                text: 'try silicon and see how this would work for your team.'
+            }),
+            el('button', {
+                type: 'button',
+                class: 'cta-btn funnel-cta',
+                onclick: function () { goTo(3); }
+            }, 'try silicon')
+        ]);
+        groupsWrap.appendChild(bottomCta);
+
+        var toggleBtn = el('button', {
+            type: 'button',
+            class: 'cta-btn cta-btn-ghost funnel-cta',
+            onclick: function () {
+                groupsWrap.classList.add('funnel-groups-wrap--open');
+            }
+        }, 'see how this works');
+
+        var tryBtn = el('button', {
             type: 'button',
             class: 'cta-btn funnel-cta',
             onclick: function () { goTo(3); }
-        }, 'continue');
+        }, 'try silicon');
 
-        var actions = el('div', { class: 'funnel-actions' }, [continueBtn]);
+        var buttonRow = el('div', { class: 'funnel-actions funnel-step2-buttons' }, [toggleBtn, tryBtn]);
 
         return el('section', {
             class: 'funnel-step funnel-step-2',
@@ -446,9 +470,8 @@
         }, [
             backLink(1, 'edit my answers'),
             heading,
-            sub,
-            groups,
-            actions
+            buttonRow,
+            groupsWrap
         ]);
     }
 
@@ -482,6 +505,18 @@
             text: state.emailSubmitted ? 'sent — continue' : 'submit'
         });
 
+        function buildTgUrl() {
+            var allProblems = [];
+            categoriesWithSelections().forEach(function (catKey) {
+                checkedFor(catKey).forEach(function (t) { allProblems.push('- ' + t); });
+            });
+            if (allProblems.length) {
+                var msg = 'Hey Silicon. These are the things I want to fix\n\n' + allProblems.join('\n');
+                return 'https://t.me/Welcome_to_Silicon_bot?text=' + encodeURIComponent(msg);
+            }
+            return TG_URL;
+        }
+
         var form = el('form', {
             class: 'funnel-email-form',
             novalidate: 'true',
@@ -502,7 +537,7 @@
                     checkedByCategory: state.checkedByCategory
                 });
 
-                goTo(4);
+                window.open(buildTgUrl(), '_blank', 'noopener');
             }
         }, [
             el('div', { class: 'funnel-email-row' }, [input, submit]),
@@ -512,7 +547,7 @@
         var skip = el('button', {
             type: 'button',
             class: 'funnel-text-link',
-            onclick: function () { goTo(4); }
+            onclick: function () { window.open(buildTgUrl(), '_blank', 'noopener'); }
         }, 'skip — just take me to telegram');
 
         return el('section', {
@@ -527,103 +562,10 @@
         ]);
     }
 
-    // ---- step 4: telegram CTA --------------------------------------------
-    function renderStep4() {
-        var heading = el('h1', {
-            class: 'funnel-headline',
-            text: 'last step — try silicon yourself.'
-        });
-        var sub = el('p', {
-            class: 'funnel-sub',
-            text: 'silicon lives in telegram. say hi, ask anything, see how it feels.'
-        });
-
-        var n = totalChecked();
-        var catCount = categoriesWithSelections().length;
-        var flagged = n
-            ? 'you flagged ' + n + ' problem' + (n === 1 ? '' : 's') +
-              ' across ' + catCount + ' categor' + (catCount === 1 ? 'y' : 'ies') + '.'
-            : '';
-
-        var thanks = state.emailSubmitted
-            ? (flagged ? flagged + ' we’ll be in touch at ' + state.email + '.'
-                       : 'thanks. we’ll be in touch at ' + state.email + '.')
-            : (flagged ? flagged + ' no email needed to try — jump straight in.'
-                       : 'no email needed to try — jump straight in.');
-
-        var thanksEl = el('p', { class: 'funnel-thanks', text: thanks });
-
-        var echoChildren = [];
-        categoriesWithSelections().forEach(function (catKey) {
-            var cat = findCategory(catKey);
-            if (!cat) return;
-            var problemList = el('ul', { class: 'funnel-echo-list' });
-            checkedFor(catKey).forEach(function (t) {
-                problemList.appendChild(el('li', { text: t }));
-            });
-            echoChildren.push(el('div', { class: 'funnel-echo-row funnel-echo-row-stack' }, [
-                el('span', { class: 'funnel-echo-label', text: cat.label.toLowerCase() }),
-                problemList
-            ]));
-        });
-        var echo = echoChildren.length
-            ? el('div', { class: 'funnel-echo' }, echoChildren)
-            : null;
-
-        var tgHref = TG_URL;
-        var allProblems = [];
-        categoriesWithSelections().forEach(function (catKey) {
-            checkedFor(catKey).forEach(function (t) { allProblems.push('- ' + t); });
-        });
-        if (allProblems.length) {
-            var msg = 'Hey Silicon. These are the things I want to fix\n\n' + allProblems.join('\n');
-            tgHref = 'https://t.me/Welcome_to_Silicon_bot?text=' + encodeURIComponent(msg);
-        }
-
-        var bigCta = el('a', {
-            href: tgHref,
-            target: '_blank',
-            rel: 'noopener',
-            class: 'cta-btn funnel-cta funnel-cta-big'
-        }, 'try silicon on telegram');
-
-        var startOver = el('button', {
-            type: 'button',
-            class: 'funnel-text-link funnel-text-link-muted',
-            onclick: function () {
-                state = Object.assign({}, defaultState, {
-                    currentCategory: firstCategoryKey,
-                    checkedByCategory: {}
-                });
-                saveState();
-                goTo(1);
-            }
-        }, 'start over');
-
-        var actions = el('div', { class: 'funnel-actions' }, [bigCta]);
-        var secondary = el('div', { class: 'funnel-actions funnel-actions-secondary' }, [startOver]);
-
-        var children = [
-            backLink(3, 'back'),
-            heading,
-            sub,
-            thanksEl
-        ];
-        if (echo) children.push(echo);
-        children.push(actions);
-        children.push(secondary);
-
-        return el('section', {
-            class: 'funnel-step funnel-step-4',
-            'data-step': '4'
-        }, children);
-    }
-
     var renderers = {
         1: renderStep1,
         2: renderStep2,
-        3: renderStep3,
-        4: renderStep4
+        3: renderStep3
     };
 
     function clampStep() {

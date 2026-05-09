@@ -490,6 +490,18 @@ main {
     opacity: 1;
 }
 
+.cta-btn-ghost {
+    background: transparent;
+    color: var(--fg);
+    border: 1.5px solid var(--fg);
+}
+
+.cta-btn-ghost:hover {
+    background: var(--fg);
+    color: var(--terminal-fg);
+    opacity: 1;
+}
+
 /* === SECTIONS === */
 .section {
     border-top: 1px solid var(--border);
@@ -1487,12 +1499,62 @@ footer {
     flex: 1;
 }
 
+.funnel-step-2 .funnel-step2-headline {
+    font-size: clamp(22px, 3.5vw, 36px);
+    font-weight: 700;
+    line-height: 1.25;
+    max-width: 640px;
+    text-align: left;
+}
+
+.funnel-step2-buttons {
+    margin-top: 2rem;
+    justify-content: flex-start;
+}
+
 /* --- step 2: solution cards (grouped by category) ---------------------- */
+.funnel-groups-wrap {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.funnel-groups-wrap--open {
+    max-height: 9999px;
+    opacity: 1;
+    padding-top: 3rem;
+    pointer-events: auto;
+}
+
+.funnel-step2-bottom-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-top: 3rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+    padding-bottom: 1rem;
+}
+
+.funnel-step2-bottom-text {
+    font-family: var(--font-sans);
+    font-size: clamp(16px, 2vw, 20px);
+    font-weight: 600;
+    color: var(--fg);
+    max-width: 480px;
+    line-height: 1.4;
+}
+
 .funnel-solution-groups {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
+
 
 .funnel-solution-group {
     display: flex;
@@ -1604,80 +1666,6 @@ footer {
     min-height: 1em;
 }
 
-/* --- step 4: tg cta ----------------------------------------------------- */
-.funnel-thanks {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--fg-dim);
-    margin-bottom: 1.75rem;
-}
-
-.funnel-echo {
-    border: 1px solid var(--border);
-    background: var(--bg);
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 2.25rem;
-    max-width: 760px;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.funnel-echo-row {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-.funnel-echo-row-stack {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.6rem;
-}
-
-.funnel-echo-label {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--fg-dim);
-    flex-shrink: 0;
-}
-
-.funnel-echo-value {
-    font-family: var(--font-sans);
-    font-weight: 700;
-    color: var(--fg);
-}
-
-.funnel-echo-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-}
-
-.funnel-echo-list li {
-    font-family: var(--font-sans);
-    font-size: 0.92rem;
-    color: var(--fg-muted);
-    line-height: 1.45;
-    padding-left: 1rem;
-    position: relative;
-}
-
-.funnel-echo-list li::before {
-    content: '·';
-    position: absolute;
-    left: 0;
-    color: var(--fg-dim);
-    font-weight: 700;
-}
 
 /* === SCROLL REVEAL === */
 /* Removed — all sections visible immediately for clean single-scroll experience */
@@ -1809,6 +1797,15 @@ footer {
     .funnel-cta-big { padding: 1.1rem 2rem; font-size: 13px; width: 100%; text-align: center; }
 
     .cta-btn { padding: 1rem 2rem; font-size: 12px; }
+
+    .funnel-step2-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .funnel-step2-buttons .cta-btn {
+        width: 100%;
+        text-align: center;
+    }
 }
 
 @media (max-width: 480px) {
